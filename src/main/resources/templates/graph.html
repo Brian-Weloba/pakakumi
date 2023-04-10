@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Graph</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <canvas id="myChart"></canvas>
+    <script th:inline="javascript">
+
+
+        var data = [[${ data }]];
+        var labels = Object.keys(data);
+        var values = Object.values(data);
+
+        var colors = values.map(function (value) {
+            if (value >= 1 && value < 10) {
+                return '#FF4D4D'; // bright red
+            } else if (value >= 10 && value < 20) {
+                return '#FFA07A'; // salmon
+            } else if (value >= 20 && value < 30) {
+                return '#F7DC6F'; // light yellow
+            } else if (value >= 30 && value < 40) {
+                return '#00FF7F'; // lime green
+            } else if (value >= 40 && value < 50) {
+                return '#87CEFA'; // sky blue
+            } else if (value >= 50 && value < 60) {
+                return '#7B68EE'; // medium purple
+            } else if (value >= 60 && value < 70) {
+                return '#DA70D6'; // orchid
+            } else {
+                return '#A9A9A9'; // dark gray
+            }
+        });
+
+
+        var realValue;
+        for (var i = 0; i < values.length; i++) {
+            if (values[i] > 100) {
+                realValue = values[i];
+                values[i] = 100;
+                labels[i] += " " + realValue;
+            }
+        }
+        var ctx = document.getElementById('myChart').getContext('2d');
+        var chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Busted At',
+                    data: values,
+                    borderColor: "#000000",
+                    backgroundColor: colors,
+                    borderWidth: 0.5
+                }]
+            },
+            options: {
+                scales: {
+                    xAxes: [{
+                        type: 'time',
+                        time: {
+                            parser: 'HH:mm',
+                            unit: 'hour',
+                            displayFormats: {
+                                hour: 'HH:mm'
+                            }
+                        },
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Time of Day'
+                        }
+                    }],
+                    yAxes: [{
+                        type: 'linear',
+                        ticks: {
+                            min: 1,
+                            max: 3000,
+                            callback: function (value, index, values) {
+                                if (value === 1 || value === 10 || value === 100 || value === 1000 || value === 3000) {
+                                    return value;
+                                }
+                            }
+                        },
+                        afterBuildTicks: function (chartObj) {
+                            chartObj.ticks = [1, 10, 100, 1000, 3000];
+                        },
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Busted At'
+                        }
+                    }]
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

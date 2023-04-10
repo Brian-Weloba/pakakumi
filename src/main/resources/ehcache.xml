@@ -1,0 +1,15 @@
+<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://ehcache.org/ehcache.xsd"
+    updateCheck="false" name="mycache">
+
+    <cache name="tech.saturdev.pakakumi.models.PakakumiEntry"
+        maxEntriesLocalHeap="1000"
+        timeToIdleSeconds="300"
+        timeToLiveSeconds="600"
+        overflowToDisk="true"
+        diskPersistent="false"
+        diskSpoolBufferSizeMB="30"
+        memoryStoreEvictionPolicy="LRU">
+    </cache>
+
+</ehcache>
