@@ -12,10 +12,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import tech.saturdev.pakakumi.models.PakakumiEntry;
 import tech.saturdev.pakakumi.repository.PakakumiEntryRepository;
+import tech.saturdev.pakakumi.service.PakakumiEntryService;
 import tech.saturdev.pakakumi.service.ScraperStatusService;
 
 @Controller
@@ -24,12 +26,15 @@ public class TemplateController {
     private PakakumiEntryRepository repository;
 
     @Autowired
+    private PakakumiEntryService service;
+
+    @Autowired
     private ScraperStatusService scraperStatusService;
 
     @GetMapping("/entries")
-    public String ShowTemplate(Model model) {
-        model.addAttribute("entries", repository.findAll());
-        // Return the name of the template file
+    public String ShowTemplate(Model model, @RequestParam(defaultValue = "15") int size,
+            @RequestParam(defaultValue = "1") int page) {
+        model.addAttribute("entries", service.getPage(page, size));
         return "entries";
     }
 
