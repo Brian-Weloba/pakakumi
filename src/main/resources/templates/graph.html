@@ -36,15 +36,13 @@
             }
         });
 
-
-        var realValue;
+        var realValues = values;
         for (var i = 0; i < values.length; i++) {
             if (values[i] > 100) {
-                realValue = values[i];
                 values[i] = 100;
-                labels[i] += " " + realValue;
             }
         }
+
         var ctx = document.getElementById('myChart').getContext('2d');
         var chart = new Chart(ctx, {
             type: 'line',
@@ -64,7 +62,8 @@
                         type: 'time',
                         time: {
                             parser: 'HH:mm',
-                            unit: 'hour',
+                            unit: 'minute',
+                            stepSize: 1,
                             displayFormats: {
                                 hour: 'HH:mm'
                             }
@@ -78,21 +77,31 @@
                         type: 'linear',
                         ticks: {
                             min: 1,
-                            max: 3000,
+                            max: 100,
                             callback: function (value, index, values) {
-                                if (value === 1 || value === 10 || value === 100 || value === 1000 || value === 3000) {
+                                if (value === 1 || value === 10 || value === 100) {
                                     return value;
                                 }
                             }
                         },
                         afterBuildTicks: function (chartObj) {
-                            chartObj.ticks = [1, 10, 100, 1000, 3000];
+                            chartObj.ticks = [1, 10, 100];
                         },
                         scaleLabel: {
                             display: true,
                             labelString: 'Busted At'
                         }
                     }]
+                },
+                tooltips: {
+                    mode: 'index',
+                    intersect: false,
+                    callbacks: {
+                        label: function (tooltipItem, data) {
+                            var realValue = realValues[tooltipItem.index];
+                            return data.labels[tooltipItem.index] + " Busted @" + realValue;
+                        }
+                    }
                 }
             }
         });
