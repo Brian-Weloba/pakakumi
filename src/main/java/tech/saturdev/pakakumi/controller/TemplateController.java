@@ -60,6 +60,9 @@ public class TemplateController {
     public String getGraphByTime(Model model, @PathVariable int time) {
 
         Map<String, Double> data = new LinkedHashMap<>();
+        Map<String, Integer> playingData = new LinkedHashMap<>();
+        Map<String, Integer> onlineData = new LinkedHashMap<>();
+
         DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
 
         // Create a DateTimeFormatter for the output time format "HH:mm:ss"
@@ -83,17 +86,29 @@ public class TemplateController {
             String outputTimeString = kenyanTime.format(outputFormatter);
 
             double bustedAt = Double.parseDouble(bet.getBustedAt().replace("x", ""));
+            int playing = bet.getPlaying();
+            int online = bet.getOnline();
+
             data.put(outputTimeString, bustedAt);
+            playingData.put(outputTimeString, playing);
+            onlineData.put(outputTimeString, online);
         }
 
         model.addAttribute("data", data);
+        model.addAttribute("playingData", playingData);
+        model.addAttribute("onlineData", onlineData);
+
         return "graph";
     }
 
     @GetMapping("/graph")
     public String getGraph(Model model) {
         List<PakakumiEntry> bets = repository.findAll();
+
         Map<String, Double> data = new LinkedHashMap<>();
+        Map<String, Integer> playingData = new LinkedHashMap<>();
+        Map<String, Integer> onlineData = new LinkedHashMap<>();
+
         DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
 
         // Create a DateTimeFormatter for the output time format "HH:mm:ss"
@@ -111,9 +126,17 @@ public class TemplateController {
             String outputTimeString = kenyanTime.format(outputFormatter);
 
             double bustedAt = Double.parseDouble(bet.getBustedAt().replace("x", ""));
+            int playing = bet.getPlaying();
+            int online = bet.getOnline();
+
             data.put(outputTimeString, bustedAt);
+            playingData.put(outputTimeString, playing);
+            onlineData.put(outputTimeString, online);
         }
         model.addAttribute("data", data);
+        model.addAttribute("playingData", playingData);
+        model.addAttribute("onlineData", onlineData);
+
         return "graph";
 
     }
