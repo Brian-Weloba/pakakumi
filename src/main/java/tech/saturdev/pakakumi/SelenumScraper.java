@@ -112,12 +112,31 @@ public class SelenumScraper implements ApplicationRunner {
                 currentValue = resultList.get(1);
 
                 if (!previousValue.equalsIgnoreCase(currentValue)) {
+
+                    WebElement onlineElement = driver.findElement(
+                            By.xpath(
+                                    "//div[contains(@class, 'css-ae97qh') and contains(span/text(), 'Online')]/strong"));
+                    WebElement playingElement = driver.findElement(
+                            By.xpath(
+                                    "//div[contains(@class, 'css-ae97qh') and contains(span/text(), 'Playing')]/strong"));
+
+                    String onlineText = onlineElement.getText();
+                    String playingText = playingElement.getText();
+
+                    // Remove any spaces and commas from the string
+                    onlineText = onlineText.replaceAll("[,\\s]+", "");
+                    playingText = playingText.replaceAll("[,\\s]+", "");
+
+                    // Convert the string to an integer
+                    int onlineValue = Integer.parseInt(onlineText);
+                    int playingValue = Integer.parseInt(playingText);
+
                     PakakumiEntry entry = new PakakumiEntry();
                     entry.setBetTime(LocalDateTime.now());
                     entry.setBetDuration(Duration.ofMinutes(15));
                     entry.setBustedAt(currentValue);
-                    entry.setPlaying(1);
-                    entry.setOnline(0);
+                    entry.setPlaying(playingValue);
+                    entry.setOnline(onlineValue);
                     repository.save(entry);
                     return currentValue;// 1
 
