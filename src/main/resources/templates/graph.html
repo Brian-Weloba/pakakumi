@@ -80,6 +80,8 @@
                     borderColor: 'rgba(255, 99, 132, 1)',
                     borderWidth: 1,
                     fill: false,
+                    pointRadius: 2,
+                    pointHoverRadius: 3
                 },
                 {
                     label: 'Online',
@@ -87,6 +89,8 @@
                     borderColor: 'rgba(54, 162, 235, 1)',
                     borderWidth: 1,
                     fill: false,
+                    pointRadius: 2,
+                    pointHoverRadius: 3
                 }
                 ]
             },
@@ -99,7 +103,12 @@
                                 return `Busted At: ${realValue}`;
                             },
                             title: function (context) {
-                                return `Time: ${context[0].label}`
+                                return `Time: ${context[0].label}`;
+                            },
+                            afterTitle: function (context) {
+                                var playing = playingValues[context[0].dataIndex];
+                                var online = onlineValues[context[0].dataIndex];
+                                return `Playing: ${playing} \nOnline: ${online}`;
                             }
                         }
                     }
