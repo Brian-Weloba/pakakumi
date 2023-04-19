@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import tech.saturdev.pakakumi.models.PakakumiEntry;
 import tech.saturdev.pakakumi.repository.PakakumiEntryRepository;
 import tech.saturdev.pakakumi.service.PakakumiEntryService;
+import tech.saturdev.pakakumi.service.RequestService;
 import tech.saturdev.pakakumi.service.ScraperStatusService;
 
 @Controller
@@ -26,15 +27,25 @@ public class TemplateController {
     private PakakumiEntryRepository repository;
 
     @Autowired
-    private PakakumiEntryService service;
+    private RequestService requestService;
+
+    @Autowired
+    private PakakumiEntryService pakakumiEntryService;
 
     @Autowired
     private ScraperStatusService scraperStatusService;
 
+    @GetMapping("/requests")
+    public String getRequests(Model model, @RequestParam(defaultValue = "15") int size,
+            @RequestParam(defaultValue = "1") int page) {
+        model.addAttribute("requests", requestService.getPage(page, size));
+        return "requests";
+    }
+
     @GetMapping("/entries")
     public String ShowTemplate(Model model, @RequestParam(defaultValue = "15") int size,
             @RequestParam(defaultValue = "1") int page) {
-        model.addAttribute("entries", service.getPage(page, size));
+        model.addAttribute("entries", pakakumiEntryService.getPage(page, size));
         return "entries";
     }
 
