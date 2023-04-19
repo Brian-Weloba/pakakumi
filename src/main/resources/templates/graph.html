@@ -26,12 +26,12 @@
         var playingLabels = Object.keys(playingData);
         var playingValues = Object.values(playingData);
 
+        var maxOnlineValue = Math.max(...onlineValues);
         var maxPlayingValue = Math.max(...playingValues);
         var scaledPlayingValues = playingValues.map(function (value) {
-            return value * 100 / maxPlayingValue;
+            return value * 100 / maxOnlineValue;
         });
 
-        var maxOnlineValue = Math.max(...onlineValues);
         var scaledOnlineValues = onlineValues.map(function (value) {
             return value * 100 / maxOnlineValue;
         });
