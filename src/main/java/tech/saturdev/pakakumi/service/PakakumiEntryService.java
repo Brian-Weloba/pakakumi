@@ -26,7 +26,7 @@ public class PakakumiEntryService {
 
     public Page<PakakumiEntry> getPagedEntries(int page, int size) {
         Page<PakakumiEntry> entries = repo.findAll(PageRequest.of(page, size));
-        System.out.println(entries);
+        // System.out.println(entries);
         return entries;
     }
 

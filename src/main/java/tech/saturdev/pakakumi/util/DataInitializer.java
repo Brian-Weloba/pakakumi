@@ -1,4 +1,4 @@
-package tech.saturdev.pakakumi;
+package tech.saturdev.pakakumi.util;
 
 import java.time.Duration;
 import java.time.LocalDateTime;

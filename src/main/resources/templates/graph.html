@@ -12,9 +12,29 @@
     <script th:inline="javascript">
 
 
-        var data = [${data}];
+        var data = [[${ data }]];
         var labels = Object.keys(data);
         var values = Object.values(data);
+
+        var realValues = Object.values(data);
+
+        var onlineData = [[${ onlineData }]];
+        var onlineLabels = Object.keys(onlineData);
+        var onlineValues = Object.values(onlineData);
+
+        var playingData = [[${ playingData }]];
+        var playingLabels = Object.keys(playingData);
+        var playingValues = Object.values(playingData);
+
+        var maxOnlineValue = Math.max(...onlineValues);
+        var maxPlayingValue = Math.max(...playingValues);
+        var scaledPlayingValues = playingValues.map(function (value) {
+            return value * 100 / maxOnlineValue;
+        });
+
+        var scaledOnlineValues = onlineValues.map(function (value) {
+            return value * 100 / maxOnlineValue;
+        });
 
         var colors = values.map(function (value) {
             if (value >= 1 && value < 10) {
@@ -36,7 +56,6 @@
             }
         });
 
-        var realValues = values;
         for (var i = 0; i < values.length; i++) {
             if (values[i] > 100) {
                 values[i] = 100;
@@ -49,14 +68,51 @@
             data: {
                 labels: labels,
                 datasets: [{
-                    label: 'Busted At',
+                    // label: 'Value',
                     data: values,
                     borderColor: "#000000",
                     backgroundColor: colors,
                     borderWidth: 0.5
-                }]
+                },
+                {
+                    label: 'Playing',
+                    data: scaledPlayingValues,
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1,
+                    fill: false,
+                    pointRadius: 2,
+                    pointHoverRadius: 3
+                },
+                {
+                    label: 'Online',
+                    data: scaledOnlineValues,
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1,
+                    fill: false,
+                    pointRadius: 2,
+                    pointHoverRadius: 3
+                }
+                ]
             },
             options: {
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            beforeTitle: function (context) {
+                                var realValue = realValues[context[0].dataIndex];
+                                return `Busted At: ${realValue}`;
+                            },
+                            title: function (context) {
+                                return `Time: ${context[0].label}`;
+                            },
+                            afterTitle: function (context) {
+                                var playing = playingValues[context[0].dataIndex];
+                                var online = onlineValues[context[0].dataIndex];
+                                return `Playing: ${playing} \nOnline: ${online}`;
+                            }
+                        }
+                    }
+                },
                 scales: {
                     xAxes: [{
                         type: 'time',
@@ -92,16 +148,6 @@
                             labelString: 'Busted At'
                         }
                     }]
-                },
-                tooltips: {
-                    mode: 'index',
-                    intersect: false,
-                    callbacks: {
-                        label: function (tooltipItem, data) {
-                            var realValue = realValues[tooltipItem.index];
-                            return data.labels[tooltipItem.index] + " Busted @" + realValue;
-                        }
-                    }
                 }
             }
         });
