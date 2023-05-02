@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import tech.saturdev.pakakumi.models.PakakumiEntry;
 import tech.saturdev.pakakumi.service.PakakumiEntryService;
+import tech.saturdev.pakakumi.service.UserService;
 
 @RestController
 @RequestMapping("/api/")
@@ -18,6 +19,9 @@ public class PakakumiEntityController {
 
     @Autowired
     private PakakumiEntryService service;
+
+    @Autowired
+    private UserService userService;
 
     @GetMapping("pakakumi-entries")
     public List<PakakumiEntry> getAllEntries() {
@@ -30,4 +34,9 @@ public class PakakumiEntityController {
         return service.getPagedEntries(page, size);
     }
 
+    @GetMapping("/AddB")
+    public String addBrian() {
+        // userService.addUser("Brian", "Test@123", List.of("ADMIN", "USER"));
+        return userService.loadUserByUsername("Brian").toString();
+    }
 }

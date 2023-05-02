@@ -35,6 +35,11 @@ public class TemplateController {
     @Autowired
     private ScraperStatusService scraperStatusService;
 
+    @GetMapping("/login")
+    public String getHomepage(Model model) {
+        return "login";
+    }
+
     @GetMapping("/requests")
     public String getRequests(Model model, @RequestParam(defaultValue = "15") int size,
             @RequestParam(defaultValue = "1") int page) {
