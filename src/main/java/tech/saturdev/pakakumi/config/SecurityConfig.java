@@ -4,58 +4,35 @@ import static org.springframework.security.config.Customizer.withDefaults;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+
 import tech.saturdev.pakakumi.security.CustomAuthenticationFailureHandler;
-import tech.saturdev.pakakumi.security.CustomAuthenticationProvider;
+import tech.saturdev.pakakumi.service.MyUserDetailsService;
 
 @Configuration
+@ComponentScan("tech.saturdev.pakakumi.security.login.repository")
 @EnableWebSecurity
 public class SecurityConfig {
 
         @Autowired
-        private CustomAuthenticationProvider authProvider;
+        MyUserDetailsService userDetailsService;
 
-        @Bean
-        public AuthenticationManager authManager(HttpSecurity http) throws Exception {
-                AuthenticationManagerBuilder authenticationManagerBuilder = http
-                                .getSharedObject(AuthenticationManagerBuilder.class);
-                authenticationManagerBuilder.authenticationProvider(authProvider);
-                return authenticationManagerBuilder.build();
+        @Autowired
+        public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+                auth
+                                .userDetailsService(userDetailsService)
+                                .passwordEncoder(passwordEncoder());
         }
 
         @Bean
-        public PasswordEncoder passwordEncoder() {
+        public BCryptPasswordEncoder passwordEncoder() {
                 return new BCryptPasswordEncoder();
-        }
-
-        @Bean
-        public InMemoryUserDetailsManager userDetailsService() {
-                UserDetails anto = User.withUsername("Anthony")
-                                .password(passwordEncoder().encode("Test@123"))
-                                .roles("USER")
-                                .build();
-                UserDetails fred = User.withUsername("Fred")
-                                .password(passwordEncoder().encode("Test@123"))
-                                .roles("USER")
-                                .build();
-                UserDetails brian = User.withUsername("Brian")
-                                .password(passwordEncoder().encode("Test@123"))
-                                .roles("ADMIN", "USER")
-                                .build();
-                InMemoryUserDetailsManager userDetailsManager = new InMemoryUserDetailsManager(anto, fred, brian);
-                System.out.println("UserDeets :: " + userDetailsManager.loadUserByUsername("Brian").toString());
-                return userDetailsManager;
-
         }
 
         @Bean
@@ -63,6 +40,7 @@ public class SecurityConfig {
                 http.authorizeHttpRequests(requests -> requests
                                 .antMatchers("/admin/**", "/requests").hasRole("ADMIN")
                                 .antMatchers("/login*").permitAll()
+                                .antMatchers("/api/AddB").permitAll()
                                 .anyRequest().authenticated())
                                 .formLogin(login -> login
                                                 .loginPage("/login")
@@ -71,14 +49,6 @@ public class SecurityConfig {
                                                 .failureHandler(new CustomAuthenticationFailureHandler()))
                                 .logout(withDefaults())
                                 .csrf(withDefaults());
-
-                // http.csrf(withDefaults())
-                // .authorizeHttpRequests(requests -> requests
-                // .antMatchers("/admin/**", "/requests").hasRole("ADMIN")
-                // .antMatchers("/login*").permitAll()
-                // .anyRequest().authenticated())
-                // .formLogin(withDefaults())
-                // .logout(withDefaults());
 
                 return http.build();
         }

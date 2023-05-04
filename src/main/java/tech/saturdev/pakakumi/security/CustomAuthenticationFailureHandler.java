@@ -32,6 +32,7 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
         } else if (exception instanceof CredentialsExpiredException) {
             errorMessage = "Credentials expired";
         } else if (exception instanceof AuthenticationServiceException) {
+            exception.printStackTrace();
             errorMessage = "Authentication service error";
         }
 

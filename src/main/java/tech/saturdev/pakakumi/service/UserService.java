@@ -1,55 +1,50 @@
 package tech.saturdev.pakakumi.service;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Arrays;
+import java.util.HashSet;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import tech.saturdev.pakakumi.models.User;
+import tech.saturdev.pakakumi.repository.RoleRepository;
 import tech.saturdev.pakakumi.repository.UserRepository;
+import tech.saturdev.pakakumi.security.login.models.Role;
+import tech.saturdev.pakakumi.security.login.models.User;
 
 @Service
-public class UserService implements UserDetailsService {
+public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private RoleRepository roleRepository;
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username);
-        if (user == null) {
-            throw new UsernameNotFoundException("User not found");
-        }
-        return new org.springframework.security.core.userdetails.User(
-                user.getUsername(),
-                user.getPassword(),
-                user.isEnabled(),
-                true, // account non expired
-                true, // credentials non expired
-                true, // account non locked
-                getAuthorities(user.getRoles()));
+    // // @Autowired
+    // // public UserService(
+    // // UserRepository userRepository,
+    // // RoleRepository roleRepository,
+    // // BCryptPasswordEncoder passwordEncoder) {
+    // // this.userRepository = userRepository;
+    // // this.roleRepository = roleRepository;
+    // // this.passwordEncoder = passwordEncoder;
+    // // }
+
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 
-    private Collection<? extends GrantedAuthority> getAuthorities(List<String> roles) {
-        return roles.stream()
-                .map(SimpleGrantedAuthority::new)
-                .collect(Collectors.toList());
+    public User findByUserName(String username) {
+        return userRepository.findByUserName(username);
     }
 
-    public void addUser(String username, String password, List<String> list) {
-        User user = new User();
-        user.setUsername(username);
-        user.setPassword(password);
+    public User saveUser(User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setEnabled(true);
-        user.setRoles(list);
-        userRepository.save(user);
+        Role userRole = roleRepository.findByRole("ROLE_ADMIN");
+        user.setRoles(new HashSet<>(Arrays.asList(userRole)));
+        return userRepository.save(user);
     }
-
 }

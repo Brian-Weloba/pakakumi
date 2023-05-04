@@ -1,9 +1,12 @@
 package tech.saturdev.pakakumi.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-import tech.saturdev.pakakumi.models.User;
+import tech.saturdev.pakakumi.security.login.models.User;
 
 public interface UserRepository extends JpaRepository<User, Long> {
-    User findByUsername(String username);
+    User findByEmail(String email);
+
+    User findByUserName(String userName);
 }

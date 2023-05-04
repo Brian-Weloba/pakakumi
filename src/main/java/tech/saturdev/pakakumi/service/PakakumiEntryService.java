@@ -20,14 +20,11 @@ public class PakakumiEntryService {
     private PakakumiEntryRepository repo;
 
     public List<PakakumiEntry> getAllEntries() {
-        List<PakakumiEntry> entries = repo.findAll();
-        return entries;
+        return repo.findAll();
     }
 
     public Page<PakakumiEntry> getPagedEntries(int page, int size) {
-        Page<PakakumiEntry> entries = repo.findAll(PageRequest.of(page, size));
-        // System.out.println(entries);
-        return entries;
+        return repo.findAll(PageRequest.of(page, size));
     }
 
     public Paged<PakakumiEntry> getPage(int pageNumber, int size) {
