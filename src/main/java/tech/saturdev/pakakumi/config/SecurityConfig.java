@@ -48,7 +48,7 @@ public class SecurityConfig {
                                                 .failureUrl("/login?error=true")
                                                 .failureHandler(new CustomAuthenticationFailureHandler()))
                                 .logout(withDefaults())
-                                .csrf(withDefaults());
+                                .csrf(csrf -> csrf.disable());
 
                 return http.build();
         }

@@ -11,6 +11,7 @@ import tech.saturdev.pakakumi.repository.RoleRepository;
 import tech.saturdev.pakakumi.repository.UserRepository;
 import tech.saturdev.pakakumi.security.login.models.Role;
 import tech.saturdev.pakakumi.security.login.models.User;
+import tech.saturdev.pakakumi.util.UserRole;
 
 @Service
 public class UserService {
@@ -43,7 +44,7 @@ public class UserService {
     public User saveUser(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setEnabled(true);
-        Role userRole = roleRepository.findByRole("ROLE_ADMIN");
+        Role userRole = roleRepository.findByRole(UserRole.ROLE_USER.getRole());
         user.setRoles(new HashSet<>(Arrays.asList(userRole)));
         return userRepository.save(user);
     }

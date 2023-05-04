@@ -11,8 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import tech.saturdev.pakakumi.models.PakakumiEntry;
 import tech.saturdev.pakakumi.repository.RoleRepository;
-import tech.saturdev.pakakumi.security.login.models.Role;
-import tech.saturdev.pakakumi.security.login.models.User;
+import tech.saturdev.pakakumi.repository.UserRepository;
 import tech.saturdev.pakakumi.service.MyUserDetailsService;
 import tech.saturdev.pakakumi.service.PakakumiEntryService;
 // import tech.saturdev.pakakumi.service.JpaUserService;
@@ -30,6 +29,9 @@ public class PakakumiEntityController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
     private RoleRepository roleRepository;
@@ -54,8 +56,10 @@ public class PakakumiEntityController {
         // return userService.loadUserByUsername("Brian").toString();
 
         // Role role = Role.builder()
-        // .role("ROLE_ADMIN").build();
+        // .role(UserRole.ROLE_SUPER_ADMIN.getRole()).build();
         // roleRepository.save(role);
+
+        // String role = UserRole.ROLE_USER.getRole();
 
         // User user = User.builder()
         // .email("bweloba@gmail.com")
@@ -65,6 +69,10 @@ public class PakakumiEntityController {
         // .password("Test@123")
         // .build();
         // userService.saveUser(user);
-        return userDetailsService.loadUserByUsername("fredm").toString();
+
+        // Role roleSA = roleRepository.findByRole(UserRole.ROLE_SUPER_ADMIN.getRole());
+        // roleRepository.delete(role);
+        return roleRepository.findAll().toString() + "\n" + userRepository.findAll().toString();
+        // return userDetailsService.loadUserByUsername("fredm").toString();
     }
 }
