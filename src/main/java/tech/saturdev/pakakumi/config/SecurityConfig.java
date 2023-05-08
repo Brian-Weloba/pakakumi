@@ -40,7 +40,9 @@ public class SecurityConfig {
                 http.authorizeHttpRequests(requests -> requests
                                 .antMatchers("/admin/**", "/requests").hasRole("ADMIN")
                                 .antMatchers("/login*").permitAll()
+                                .antMatchers("/user/registration").permitAll()
                                 .antMatchers("/api/AddB").permitAll()
+                                .antMatchers("/api/user/makeSuperAdmin/**").hasRole("ADMIN")
                                 .anyRequest().authenticated())
                                 .formLogin(login -> login
                                                 .loginPage("/login")

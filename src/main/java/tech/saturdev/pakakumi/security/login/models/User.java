@@ -12,7 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
-
+import javax.persistence.Transient;
 import javax.validation.constraints.*;
 
 import org.hibernate.validator.constraints.Length;
@@ -21,6 +21,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import tech.saturdev.pakakumi.util.PasswordMatches;
+import tech.saturdev.pakakumi.util.ValidEmail;
 
 @Data
 @Builder
@@ -28,6 +30,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Table(name = "users")
 @Entity
+@PasswordMatches
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -40,14 +43,17 @@ public class User {
     private String userName;
 
     @Column(name = "email")
-    @Email(message = "*Please provide a valid email")
+    @ValidEmail(message = "*Please provide a valid email")
     @NotEmpty(message = "*Please provide an email")
     private String email;
 
     @Column(name = "password")
     @Length(min = 5, message = "*Your password must have at least 5 characters")
-    @NotEmpty(message = "*Please provide a password")
+    @NotEmpty(message = "Please provide a password")
     private String password;
+
+    @Transient
+    private String matchingPassword;
 
     @Column(name = "first_name")
     private String firstName;

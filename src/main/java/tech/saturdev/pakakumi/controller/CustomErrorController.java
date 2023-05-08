@@ -23,16 +23,16 @@ public class CustomErrorController implements ErrorController {
 
     @RequestMapping(produces = "text/html")
     public String handleError(HttpServletRequest request, Model model) {
-        Map<String, Object> errorAttributes = this.errorAttributes.getErrorAttributes(new ServletWebRequest(request),
+        Map<String, Object> attributes = this.errorAttributes.getErrorAttributes(new ServletWebRequest(request),
                 ErrorAttributeOptions.of(ErrorAttributeOptions.Include.MESSAGE,
                         ErrorAttributeOptions.Include.STACK_TRACE,
                         ErrorAttributeOptions.Include.EXCEPTION,
                         ErrorAttributeOptions.Include.BINDING_ERRORS));
 
-        model.addAttribute("status", errorAttributes.get("status"));
-        model.addAttribute("error", errorAttributes.get("error"));
-        model.addAttribute("message", errorAttributes.get("message"));
-        model.addAttribute("path", errorAttributes.get("path"));
+        model.addAttribute("status", attributes.get("status"));
+        model.addAttribute("error", attributes.get("error"));
+        model.addAttribute("message", attributes.get("message"));
+        model.addAttribute("path", attributes.get("path"));
 
         return "error";
     }

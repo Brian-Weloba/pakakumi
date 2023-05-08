@@ -15,7 +15,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import tech.saturdev.pakakumi.repository.UserRepository;
 import tech.saturdev.pakakumi.security.login.models.Role;
 import tech.saturdev.pakakumi.security.login.models.User;
 
@@ -29,8 +28,18 @@ public class MyUserDetailsService implements UserDetailsService {
     @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userService.findByUserName(username);
+        if (user == null) {
+            String errorMessage = extracted(username);
+            throw new UsernameNotFoundException(errorMessage);
+        }
         List<GrantedAuthority> authorities = getUserAuthority(user.getRoles());
         return buildUserForAuthentication(user, authorities);
+    }
+
+    private String extracted(String username) {
+        String usernameExists = "User with username ";
+        String noUsername = "No username";
+        return username != null ? usernameExists + username : noUsername;
     }
 
     private UserDetails buildUserForAuthentication(User user, List<GrantedAuthority> authorities) {
