@@ -11,6 +11,9 @@ import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+
 import tech.saturdev.pakakumi.models.Request;
 import tech.saturdev.pakakumi.repository.RequestRepository;
 
@@ -30,7 +33,11 @@ public class RequestFilter implements Filter {
         HttpServletRequest httpRequest = (HttpServletRequest) servletRequest;
 
         if (!httpRequest.getRequestURI().equals("/requests")) {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String username = authentication != null ? authentication.getName() : "Anonymous";
+
             Request request = new Request();
+            request.setUsername(username);
             request.setRequestUrl(httpRequest.getRequestURI());
             request.setIpAddress(servletRequest.getRemoteAddr());
             request.setTime(LocalDateTime.now());

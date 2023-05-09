@@ -27,7 +27,8 @@ public class Request {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    @Column(name = "username")
+    private String username;
     @Column(name = "request_url")
     private String requestUrl;
     @Column(name = "ip_address")

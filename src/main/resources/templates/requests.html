@@ -27,6 +27,7 @@
         <thead class="table-dark">
             <tr>
                 <th>Id</th>
+                <th>User</th>
                 <th>Time</th>
                 <th>IP Address</th>
                 <th>Request Url</th>
@@ -36,6 +37,7 @@
         <tbody id="myTable">
             <tr th:each="request : ${requests.page}">
                 <td th:text="${request.id}" class="text-center"></td>
+                <td th:text="${request.username}" class="text-center"></td>
                 <td th:text="${#temporals.format(request.time, 'dd/MM/yyyy hh:mm:ss a')}" class="text-center"></td>
                 <td th:text="${request.ipAddress}" class="text-center"></td>
                 <td th:text="${request.requestUrl}" class="text-center"></td>
