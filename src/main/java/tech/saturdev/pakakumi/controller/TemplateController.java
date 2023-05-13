@@ -2,6 +2,7 @@ package tech.saturdev.pakakumi.controller;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -120,11 +121,97 @@ public class TemplateController {
             onlineData.put(outputTimeString, online);
         }
 
+        // Sort the list by the "bustedAt" field in ascending order using the merge sort
+        // algorithm
+        List<PakakumiEntry> sortedBets = mergeSort(bets);
+
+        // Find the index at which 70% of the values are above the "bustedAt" value
+        int index = (int) Math.ceil(0.30 * sortedBets.size());
+
+        // Get the "bustedAt" value at the index
+        String value = sortedBets.get(index).getBustedAt();
+        Double valueDouble = Double.parseDouble(value.replace("x", ""));
+
+        int countAbove = 0;
+        int countBelow = 0;
+        for (PakakumiEntry bet : sortedBets) {
+            if (Double.parseDouble(bet.getBustedAt().replace("x", "")) > valueDouble) {
+                countAbove++;
+            } else {
+                countBelow++;
+            }
+        }
+
+        // Calculate percentiles with increments of 10
+        Map<Integer, Double> percentiles = new LinkedHashMap<>();
+        for (int i = 10; i < 100; i += 10) {
+            int percentileIndex = (int) Math.ceil(i / 100.0 * sortedBets.size());
+            double percentileValue;
+            try {
+                percentileValue = Double
+                        .parseDouble(sortedBets.get(percentileIndex).getBustedAt().replace("x", ""));
+            } catch (IndexOutOfBoundsException e) {
+                percentileValue = Double
+                        .parseDouble(sortedBets.get(percentileIndex - 1).getBustedAt().replace("x", ""));
+            }
+            percentiles.put(i, percentileValue);
+        }
+
+        model.addAttribute("percentiles", percentiles); // Add the percentiles to the model
+        model.addAttribute("betCount", bets.size());
+        model.addAttribute("below", countBelow);
+        model.addAttribute("above", countAbove);
+        model.addAttribute("optimal", value);
         model.addAttribute("data", data);
         model.addAttribute("playingData", playingData);
         model.addAttribute("onlineData", onlineData);
 
         return "graph";
+    }
+
+    // Merge sort implementation
+    private List<PakakumiEntry> mergeSort(List<PakakumiEntry> list) {
+        if (list.size() <= 1) {
+            return list;
+        }
+
+        int mid = list.size() / 2;
+        List<PakakumiEntry> left = list.subList(0, mid);
+        List<PakakumiEntry> right = list.subList(mid, list.size());
+
+        left = mergeSort(left);
+        right = mergeSort(right);
+
+        return merge(left, right);
+    }
+
+    private List<PakakumiEntry> merge(List<PakakumiEntry> left, List<PakakumiEntry> right) {
+        List<PakakumiEntry> merged = new ArrayList<>();
+
+        int i = 0;
+        int j = 0;
+        while (i < left.size() && j < right.size()) {
+            double leftBustedAt = Double.parseDouble(left.get(i).getBustedAt().replace("x", ""));
+            double rightBustedAt = Double.parseDouble(right.get(j).getBustedAt().replace("x", ""));
+            if (leftBustedAt < rightBustedAt) {
+                merged.add(left.get(i));
+                i++;
+            } else {
+                merged.add(right.get(j));
+                j++;
+            }
+        }
+        while (i < left.size()) {
+            merged.add(left.get(i));
+            i++;
+        }
+
+        while (j < right.size()) {
+            merged.add(right.get(j));
+            j++;
+        }
+
+        return merged;
     }
 
     @GetMapping("/graph")
@@ -202,7 +289,6 @@ public class TemplateController {
             result.rejectValue("password", "PasswordMismatch", e.getMessage());
             return "registration";
         }
-        // return "redirect:/login?success"; // redirect to login page
     }
 
 }
