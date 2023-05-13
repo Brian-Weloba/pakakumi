@@ -96,8 +96,9 @@ public class SelenumScraper implements ApplicationRunner {
                 Thread.sleep(LOOP_DELAY_MS);
             }
         } catch (Exception e) {
-            System.out.println(
-                    ANSI_RED + "An error occurred while scraping the web page: " + e.getMessage() + ANSI_RESET);
+            // System.out.println(
+            // ANSI_RED + "An error occurred while scraping the web page: " + e.getMessage()
+            // + ANSI_RESET);
         }
     }
 
@@ -146,7 +147,8 @@ public class SelenumScraper implements ApplicationRunner {
             }
             return "0";
         } catch (Exception e) {
-            System.out.println(ANSI_RED + "An error occurred while scraping the data: " + e.getMessage() + ANSI_RESET);
+            // System.out.println(ANSI_RED + "An error occurred while scraping the data: " +
+            // e.getMessage() + ANSI_RESET);
             return previousValue; // return the previous value if an error occurs
         }
     }

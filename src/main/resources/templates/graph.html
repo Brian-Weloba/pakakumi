@@ -3,12 +3,52 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Graph</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
 <body>
     <canvas id="myChart"></canvas>
+    <div class="py-5 px-10">
+        <h2 class="font-bold underline text-2xl">Percentiles</h2>
+        <p class="indent-4">This table shows the percentage of Pakakumi bets that had a "bustedAt" value above a certain
+            threshold. For
+            example, the value in the <span class="font-bold">"70%"</span> row means that <span
+                class="font-bold">70%</span> of the bets had a "bustedAt" value above <span th:text="${optimal}"
+                class="font-bold"></span> . The values
+            in the table are sorted in ascending order, so as you go down the table, the threshold values become higher,
+            indicating that more bets had a "bustedAt" value above that threshold. The percentiles range from 10% to 90%
+            with increments of 10.</p>
+        <div class="pt-5">
+            <table class="table-auto border border-gray-300">
+                <caption class="caption-bottom text-sm text-gray-500 mb-2">
+                    Table: Percentiles
+                </caption>
+                <thead>
+                    <tr class="bg-gray-100">
+                        <th class="px-4 py-2 font-medium text-gray-700">Percentile</th>
+                        <th class="px-4 py-2 font-medium text-gray-700">Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="entry : ${percentiles}" class="border-t border-gray-300">
+                        <td class="px-4 py-2 text-gray-700 font-medium" th:text="${entry.key + '%'}"></td>
+                        <td class="px-4 py-2 text-gray-700" th:text="${entry.value}"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 
+        <div>
+            <h4>70% of bets are above: <span th:text="${optimal}"></span></h4>
+            <h4>Total: <span th:text="${betCount}"></span></h4>
+            <h4>Above: <span th:text="${above}"></span></h4>
+            <h4>Below <span th:text="${below}"></span></h4>
+        </div> -->
+    </div>
     <script th:inline="javascript">
 
 
@@ -26,12 +66,12 @@
         var playingLabels = Object.keys(playingData);
         var playingValues = Object.values(playingData);
 
+        var maxOnlineValue = Math.max(...onlineValues);
         var maxPlayingValue = Math.max(...playingValues);
         var scaledPlayingValues = playingValues.map(function (value) {
-            return value * 100 / maxPlayingValue;
+            return value * 100 / maxOnlineValue;
         });
 
-        var maxOnlineValue = Math.max(...onlineValues);
         var scaledOnlineValues = onlineValues.map(function (value) {
             return value * 100 / maxOnlineValue;
         });

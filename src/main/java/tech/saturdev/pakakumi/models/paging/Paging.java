@@ -23,6 +23,7 @@ public class Paging {
     private int pageSize;
     private int pageNumber;
 
+    @Builder.Default
     private List<PageItem> items = new ArrayList<>();
 
     public void addPageItems(int from, int to, int pageNumber) {
